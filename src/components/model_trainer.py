@@ -30,7 +30,54 @@ class ModelTrainer:
                 "catboosting classifier":CatBoostRegressor(verbose=0),
                 "adaboost":AdaBoostRegressor()
                 }
-            model_report:dict=evaluate_models(x_train=x_train,y_train=y_train,x_test=x_test,y_test=y_test,models=models)
+            params = {
+    "random forest": {
+        "n_estimators": [100, 200, 300],
+        ##"min_samples_split": [2, 5, 10],
+        #"min_samples_leaf": [1, 2, 4],
+        #"bootstrap": [True, False]
+    },
+
+    "decision tree": {
+        "max_depth": [None, 10, 20, 30],
+        #"min_samples_split": [2, 5, 10],
+        #"min_samples_leaf": [1, 2, 4],
+        "criterion": ["squared_error", "friedman_mse"]
+    },
+
+    "linear regression": {
+        "fit_intercept": [True, False],
+        "positive": [True, False]
+    },
+
+    "k-neighbors": {
+        "n_neighbors": [3, 5, 7, 9],
+        #"weights": ["uniform", "distance"],
+        #"algorithm": ["auto", "ball_tree", "kd_tree"],
+        #"p": [1, 2]  # 1 = Manhattan, 2 = Euclidean
+    },
+
+    "xgboost": {
+        "n_estimators": [100, 200, 300],
+        "learning_rate": [0.01, 0.05, 0.1],
+        #"max_depth": [3, 5, 7],
+        #"subsample": [0.7, 0.8, 1.0],
+        #"colsample_bytree": [0.7, 0.8, 1.0]
+    },
+
+    "catboosting classifier": {
+        "iterations": [100, 200, 300],
+        "learning_rate": [0.01, 0.05, 0.1],
+        "depth": [4, 6, 8]
+    },
+
+    "adaboost": {
+        "n_estimators": [50, 100, 200],
+        "learning_rate": [0.01, 0.1, 1.0],
+        #"loss": ["linear", "square", "exponential"]
+    }
+}
+            model_report:dict=evaluate_models(x_train=x_train,y_train=y_train,x_test=x_test,y_test=y_test,models=models,params=params)
             best_report_score=max(sorted(model_report.values()))
             best_model_name=list(model_report.keys())[list(model_report.values()).index(best_report_score)]
             best_model=models[best_model_name]
